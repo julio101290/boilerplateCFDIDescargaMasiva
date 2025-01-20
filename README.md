@@ -1,7 +1,7 @@
-[![Latest Stable Version](https://poser.okvpn.org/julio101290/boilerplatequotes/v/stable)](https://packagist.org/packages/julio101290/boilerplatequotes) [![Total Downloads](https://poser.okvpn.org/julio101290/boilerplatequotes/downloads)](https://packagist.org/packages/julio101290/boilerplatequotes) [![Latest Unstable Version](https://poser.okvpn.org/julio101290/boilerplatequotes/v/unstable)](https://packagist.org/packages/julio101290/boilerplatequotes) [![License](https://poser.okvpn.org/julio101290/boilerplatequotes/license)](https://packagist.org/packages/julio101290/boilerplatequotes)
+[![Latest Stable Version](https://poser.okvpn.org/julio101290/boilerplatecfdidescargamasiva/v/stable)](https://packagist.org/packages/julio101290/boilerplatecfdidescargamasiva) [![Total Downloads](https://poser.okvpn.org/julio101290/boilerplatecfdidescargamasiva/downloads)](https://packagist.org/packages/julio101290/boilerplatecfdidescargamasiva) [![Latest Unstable Version](https://poser.okvpn.org/julio101290/boilerplatecfdidescargamasiva/v/unstable)](https://packagist.org/packages/julio101290/boilerplatecfdidescargamasiva) [![License](https://poser.okvpn.org/julio101290/boilerplatecfdidescargamasiva/license)](https://packagist.org/packages/julio101290/boilerplatecfdidescargamasiva)
 
-## CodeIgniter 4 Boilerplate CFDI
-library for the administration of CFDI electronic invoices, printing, uploading, downloading, etc.
+## CodeIgniter 4 Boilerplate CFDI Bulk download
+library for the Bulk download CFDI electronic invoices from SAT, alone require Cert Fiel, Key and Password .
 
 ## Requirements
 * PhpCfdi\SatCatalogos
@@ -29,6 +29,8 @@ library for the administration of CFDI electronic invoices, printing, uploading,
 
 	composer require julio101290/boilerplatequotes
 
+ 	composer require julio101290/boilerplatecfdidescargamasiva
+
 
 ### Run command for migration and seeder
 
@@ -41,17 +43,18 @@ library for the administration of CFDI electronic invoices, printing, uploading,
 	php spark boilerplatetypesmovement:installtypesmovement
 
 	php spark boilerplatequotes:installquotes
+
+ 	php spark boilerplatecfdidescargamasiva:installcfdidescargamasiva
 	
 
 # Make the Menu, Example
 
-![image](https://github.com/user-attachments/assets/e4a13d86-c714-4237-b29e-adb5616b7283)
-
+![image](https://github.com/user-attachments/assets/106f7134-3b94-4d2d-a8b3-065340666b19)
 
 
 # Ready
 
-![image](https://github.com/user-attachments/assets/34038a0e-533b-466e-bd4d-21ee439dad05)
+![image](https://github.com/user-attachments/assets/cc2a3cf8-3b38-4ae5-86ea-06f4956a0113)
 
 
 
