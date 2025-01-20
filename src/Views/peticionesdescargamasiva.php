@@ -7,7 +7,7 @@
 <!-- Section content -->
 <?= $this->section('content') ?>
 
-<?= $this->include('julio101290\boilerplateCFDIDescargaMasiva\Views\modulesXml/modulesPeticionesdescargamasiva/modalCapturePeticionesdescargamasiva') ?>
+<?= $this->include('julio101290\boilerplateCFDIDescargaMasiva\Views\modulesPeticionesdescargamasiva/modalCapturePeticionesdescargamasiva') ?>
 
 <!-- SELECT2 EXAMPLE -->
 <div class="card card-default">

@@ -1,6 +1,6 @@
 <?php
 
-namespace julio101290\boilerplateCFDI\Commands;
+namespace julio101290\boilerplateCFDIDescargaMasiva\Commands;
 
 use CodeIgniter\CLI\BaseCommand;
 use Config\Database;
