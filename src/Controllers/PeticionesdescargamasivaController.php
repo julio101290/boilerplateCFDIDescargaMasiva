@@ -375,6 +375,7 @@ class PeticionesdescargamasivaController extends BaseController {
                 $request = QueryParameters::create()
                         ->withPeriod(DateTimePeriod::createFromValues($desdeFecha, $hastaFecha))
                         ->withRequestType(RequestType::xml())
+                        ->withDocumentStatus(DocumentStatus::active())
                         ->withDownloadType(DownloadType::received());
             }
 
