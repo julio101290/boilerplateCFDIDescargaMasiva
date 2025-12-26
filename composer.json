@@ -34,7 +34,7 @@
     "julio101290/boilerplatecustumers": "^1.0.0",
     "julio101290/boilerplateinventory": "^1.0.0",
     "phpcfdi/cfditopdf": "^0.1",
-    "phpcfdi/cfdi-to-json": "^1.1",
+    "phpcfdi/cfdi-to-json": "^0.1",
     "phpcfdi/xml-cancelacion": "^2.0",
     "phpcfdi/sat-estado-cfdi": "^1.0",
     "phpcfdi/sat-estado-cfdi-soap": "^1.0",
@@ -64,6 +64,7 @@
         "test": "phpunit --colors=always -vvv"
     }
 }
+
 
 
 
