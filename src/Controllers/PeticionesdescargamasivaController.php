@@ -59,32 +59,88 @@ class PeticionesdescargamasivaController extends BaseController {
         $idUser = user()->id;
         $titulos["empresas"] = $this->empresa->mdlEmpresasPorUsuario($idUser);
 
-        if (count($titulos["empresas"]) == "0") {
-
-            $empresasID[0] = "0";
+        if (count($titulos["empresas"]) === 0) {
+            $empresasID = [0];
         } else {
-
             $empresasID = array_column($titulos["empresas"], "id");
         }
-        // $empresasID = implode(",", $empresasID);
 
+        // ---------------- AJAX DATATABLES ----------------
         if ($this->request->isAJAX()) {
-            $datos = $this->peticionesdescargamasiva->select('id,desdeFecha
-            ,hastaFecha
-            ,emitidoRecibido
-            ,tipoPeticion
-            ,uuidPeticion
-            ,created_at
-            ,updated_at
-            ,deleted_at
-            ,nombreArchivo
-            ,status')->where('deleted_at', null)->whereIn("idEmpresa", $empresasID);
-            return \Hermawan\DataTables\DataTable::of($datos)->toJson(true);
+
+            $request = $this->request->getPost();
+
+            $draw = intval($request['draw'] ?? 1);
+            $start = intval($request['start'] ?? 0);
+            $length = intval($request['length'] ?? 10);
+            $search = $request['search']['value'] ?? '';
+
+            $columns = [
+                'id',
+                'desdeFecha',
+                'hastaFecha',
+                'emitidoRecibido',
+                'tipoPeticion',
+                'uuidPeticion',
+                'created_at',
+                'updated_at',
+                'deleted_at',
+                'nombreArchivo',
+                'status'
+            ];
+
+            $orderColumnIndex = $request['order'][0]['column'] ?? 0;
+            $orderDir = $request['order'][0]['dir'] ?? 'asc';
+            $orderColumn = $columns[$orderColumnIndex] ?? 'id';
+
+            // ---------------- QUERY BASE ----------------
+            $builder = $this->peticionesdescargamasiva
+                    ->select(implode(',', $columns))
+                    ->where('deleted_at', null)
+                    ->whereIn('idEmpresa', $empresasID);
+
+            // ---------------- SEARCH ----------------
+            if (!empty($search)) {
+                $builder->groupStart();
+                foreach ($columns as $col) {
+                    $builder->orLike($col, $search);
+                }
+                $builder->groupEnd();
+            }
+
+            // ---------------- TOTAL RECORDS ----------------
+            $totalRecords = $this->peticionesdescargamasiva
+                    ->where('deleted_at', null)
+                    ->whereIn('idEmpresa', $empresasID)
+                    ->countAllResults(false);
+
+            // ---------------- FILTERED RECORDS ----------------
+            $filteredBuilder = clone $builder;
+            $recordsFiltered = $filteredBuilder->countAllResults(false);
+
+            // ---------------- PAGINATION + ORDER ----------------
+            $data = $builder
+                    ->orderBy($orderColumn, $orderDir)
+                    ->limit($length, $start)
+                    ->get()
+                    ->getResultArray();
+
+            return $this->response->setJSON([
+                        'draw' => $draw,
+                        'recordsTotal' => $totalRecords,
+                        'recordsFiltered' => $recordsFiltered,
+                        'data' => $data
+            ]);
         }
+
+        // ---------------- VIEW ----------------
         $titulos["title"] = lang('peticionesdescargamasiva.title');
         $titulos["subtitle"] = lang('peticionesdescargamasiva.subtitle');
 
-        return view('julio101290\boilerplateCFDIDescargaMasiva\Views\peticionesdescargamasiva', $titulos);
+        return view(
+                'julio101290\boilerplateCFDIDescargaMasiva\Views\peticionesdescargamasiva',
+                $titulos
+        );
     }
 
     /**
@@ -326,9 +382,9 @@ class PeticionesdescargamasivaController extends BaseController {
         $rutaLlave = ROOTPATH . "writable/uploads/certificates/$datosEmpresa[archivoKey]";
         $rutaCer = ROOTPATH . "writable/uploads/certificates/$datosEmpresa[certificado]";
         $fiel = Fiel::create(
-                        file_get_contents($rutaCer),
-                        file_get_contents($rutaLlave),
-                        $datosEmpresa["contraCertificado"]
+                file_get_contents($rutaCer),
+                file_get_contents($rutaLlave),
+                $datosEmpresa["contraCertificado"]
         );
 
         // verificar que la FIEL sea válida (no sea CSD y sea vigente acorde a la fecha del sistema)
@@ -502,21 +558,19 @@ class PeticionesdescargamasivaController extends BaseController {
         $infoPeticionesdescargamasiva = $this->peticionesdescargamasiva->find($id);
         helper('auth');
         $userName = user()->username;
-        
-        
-        if($infoPeticionesdescargamasiva["status"] != "aceptada"){
-            
-           echo "Ya esta procesada no es posible eliminar";
-            
+
+        if ($infoPeticionesdescargamasiva["status"] != "aceptada") {
+
+            echo "Ya esta procesada no es posible eliminar";
         }
-        
-        
+
+
         if (!$found = $this->peticionesdescargamasiva->delete($id)) {
             return $this->failNotFound(lang('peticionesdescargamasiva.msg.msg_get_fail'));
         }
-        
-   
-        
+
+
+
         $this->peticionesdescargamasiva->purgeDeleted();
         $logData["description"] = lang("peticionesdescargamasiva.logDeleted") . json_encode($infoPeticionesdescargamasiva);
         $logData["user"] = $userName;
