@@ -65,10 +65,10 @@ class PeticionesdescargamasivaController extends BaseController {
             $empresasID = array_column($titulos["empresas"], "id");
         }
 
-        // ---------------- AJAX DATATABLES ----------------
+        // ===================== AJAX DATATABLES =====================
         if ($this->request->isAJAX()) {
 
-            $request = $this->request->getPost();
+            $request = $this->request->getGet();
 
             $draw = intval($request['draw'] ?? 1);
             $start = intval($request['start'] ?? 0);
@@ -93,33 +93,32 @@ class PeticionesdescargamasivaController extends BaseController {
             $orderDir = $request['order'][0]['dir'] ?? 'asc';
             $orderColumn = $columns[$orderColumnIndex] ?? 'id';
 
-            // ---------------- QUERY BASE ----------------
-            $builder = $this->peticionesdescargamasiva
+            // -------- TOTAL SIN FILTROS --------
+            $recordsTotal = $this->peticionesdescargamasiva
+                    ->where('deleted_at', null)
+                    ->whereIn('idEmpresa', $empresasID)
+                    ->countAllResults();
+
+            // -------- BUILDER FILTRADO --------
+            $dataBuilder = $this->peticionesdescargamasiva
                     ->select(implode(',', $columns))
                     ->where('deleted_at', null)
                     ->whereIn('idEmpresa', $empresasID);
 
-            // ---------------- SEARCH ----------------
+            // SEARCH GLOBAL
             if (!empty($search)) {
-                $builder->groupStart();
+                $dataBuilder->groupStart();
                 foreach ($columns as $col) {
-                    $builder->orLike($col, $search);
+                    $dataBuilder->orLike($col, $search);
                 }
-                $builder->groupEnd();
+                $dataBuilder->groupEnd();
             }
 
-            // ---------------- TOTAL RECORDS ----------------
-            $totalRecords = $this->peticionesdescargamasiva
-                    ->where('deleted_at', null)
-                    ->whereIn('idEmpresa', $empresasID)
-                    ->countAllResults(false);
+            // -------- TOTAL FILTRADO --------
+            $recordsFiltered = $dataBuilder->countAllResults(false);
 
-            // ---------------- FILTERED RECORDS ----------------
-            $filteredBuilder = clone $builder;
-            $recordsFiltered = $filteredBuilder->countAllResults(false);
-
-            // ---------------- PAGINATION + ORDER ----------------
-            $data = $builder
+            // -------- DATA --------
+            $data = $dataBuilder
                     ->orderBy($orderColumn, $orderDir)
                     ->limit($length, $start)
                     ->get()
@@ -127,13 +126,13 @@ class PeticionesdescargamasivaController extends BaseController {
 
             return $this->response->setJSON([
                         'draw' => $draw,
-                        'recordsTotal' => $totalRecords,
+                        'recordsTotal' => $recordsTotal,
                         'recordsFiltered' => $recordsFiltered,
                         'data' => $data
             ]);
         }
 
-        // ---------------- VIEW ----------------
+        // ===================== VIEW =====================
         $titulos["title"] = lang('peticionesdescargamasiva.title');
         $titulos["subtitle"] = lang('peticionesdescargamasiva.subtitle');
 
