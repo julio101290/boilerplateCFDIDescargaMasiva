@@ -19,5 +19,6 @@ $routes->group('admin', function ($routes) {
 
     $routes->post('peticionesdescargamasiva/getPeticionesdescargamasiva'
             , 'PeticionesdescargamasivaController::getPeticionesdescargamasiva'
+            , ['namespace' => 'julio101290\boilerplateCFDIDescargaMasiva\Controllers']
     );
 });
